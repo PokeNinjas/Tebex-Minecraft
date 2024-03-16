@@ -9,10 +9,10 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 rootProject.name = "TebexPlugin"
 
-listOf("sdk", "bukkit", "bungeecord", "velocity", "fabric").forEach(::include)
+listOf("sdk", "fabric", "velocity").forEach(::include)
 
