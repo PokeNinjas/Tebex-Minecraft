@@ -81,27 +81,20 @@ public class BuyGUI {
 
         if (category instanceof Category cat) {
             if (cat.getSubCategories() != null) {
-                cat.getSubCategories().forEach(subCategory -> subListingGui.addSlot(getCategoryItemBuilder(subCategory).setCallback((index, clickType, actionType) -> {
-                    openCategoryMenu(player, subCategory);
-                })));
+                cat.getSubCategories().forEach(subCategory -> subListingGui.addSlot(getCategoryItemBuilder(subCategory).setCallback((index, clickType, actionType) -> openCategoryMenu(player, subCategory))));
 
                 subListingGui.setSlot((rows*9) - 5, getBackItemBuilder()
-                        .setCallback((index, clickType, actionType) -> {
-                            open(player);
-                        })
+                        .setCallback((index, clickType, actionType) -> open(player))
                 );
             }
-        } else if (category instanceof SubCategory) {
-            SubCategory subCategory = (SubCategory) category;
+        } else if (category instanceof SubCategory subCategory) {
 
             subListingGui.setTitle(Text.of(convertToLegacyString(config.getString("gui.menu.sub-category.title"))
                     .replace("%category%", subCategory.getParent().getName())
                     .replace("%sub_category%", category.getName())));
 
             subListingGui.setSlot((rows*9) - 5, getBackItemBuilder()
-                    .setCallback((index, clickType, actionType) -> {
-                        openCategoryMenu(player, subCategory.getParent());
-                    })
+                    .setCallback((index, clickType, actionType) -> openCategoryMenu(player, subCategory.getParent()))
             );
         }
 
@@ -109,9 +102,7 @@ public class BuyGUI {
             player.closeHandledScreen();
 
             // Create Checkout Url
-            platform.getSDK().createCheckoutUrl(categoryPackage.getId(), player.getEntityName()).thenAccept(checkout -> {
-                player.sendMessage(Text.of("§aYou can checkout here: " + checkout.getUrl()), false);
-            }).exceptionally(ex -> {
+            platform.getSDK().createCheckoutUrl(categoryPackage.getId(), player.getEntityName()).thenAccept(checkout -> player.sendMessage(Text.of("§aYou can checkout here: " + checkout.getUrl()), false)).exceptionally(ex -> {
                 player.sendMessage(Text.of("§cFailed to create checkout URL. Please contact an administrator."), false);
                 ex.printStackTrace();
                 platform.sendTriageEvent(ex);
