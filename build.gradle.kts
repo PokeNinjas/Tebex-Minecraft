@@ -27,9 +27,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
-            name = "spigotmc-repo"
-        }
         maven("https://oss.sonatype.org/content/groups/public/") {
             name = "sonatype"
         }
