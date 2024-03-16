@@ -3,13 +3,13 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("fabric-loom") version "1.0-SNAPSHOT" apply false
+    id("fabric-loom") version "1.5-SNAPSHOT" apply false
 }
 
 defaultTasks("shadowJar")
 
 group = "io.tebex"
-version = "2.0.4"
+version = "3.0.0-Beta-1"
 
 subprojects {
     plugins.apply("java")

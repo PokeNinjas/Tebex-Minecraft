@@ -15,28 +15,28 @@ var loaderVersion = properties["loader_version"] as String
 var fabricVersion = properties["fabric_version"] as String
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
     shadow(project(":sdk"))
-    shadow("it.unimi.dsi:fastutil:8.5.6")
-    shadow("com.github.cryptomorin:XSeries:9.3.1") {
+    shadow("it.unimi.dsi:fastutil:8.5.13")
+    shadow("com.github.cryptomorin:XSeries:9.9.0") {
         isTransitive = false
     }
 
     minecraft("com.mojang:minecraft:${minecraftVersion}")
     mappings("net.fabricmc:yarn:${yarnMappings}:v2")
 
-    modImplementation("eu.pb4:sgui:0.5.0")
-    include("eu.pb4:sgui:0.5.0")
+    modImplementation("eu.pb4:sgui:1.2.2+1.20")
+    include("eu.pb4:sgui:1.2.2+1.20")
 
     modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 
-    compileOnly("dev.dejvokep:boosted-yaml:1.3")
+    compileOnly("dev.dejvokep:boosted-yaml:1.3.2")
 }
 
 

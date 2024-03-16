@@ -17,7 +17,7 @@ import io.tebex.sdk.platform.PlatformType;
 import io.tebex.sdk.platform.config.ServerPlatformConfig;
 import io.tebex.sdk.request.response.ServerInformation;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -74,7 +74,7 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
         });
 
         // Initialise Managers.
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new CommandManager(this).register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> new CommandManager(TebexPlugin.this).register(dispatcher));
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> Multithreading.shutdown());
     }
@@ -97,23 +97,20 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
 
         new JoinListener(this);
 
-        executeAsync(new Runnable() {
-            @Override
-            public void run() {
-                info("Loading store information...");
-                getSDK().getServerInformation()
-                        .thenAccept(information -> storeInformation = information)
-                        .exceptionally(error -> {
-                            warning("Failed to load server information: " + error.getMessage());
-                            return null;
-                        });
-                getSDK().getListing()
-                        .thenAccept(listing -> storeCategories = listing)
-                        .exceptionally(error -> {
-                            warning("Failed to load store categories: " + error.getMessage());
-                            return null;
-                        });
-            }
+        executeAsync(() -> {
+            info("Loading store information...");
+            getSDK().getServerInformation()
+                    .thenAccept(information -> storeInformation = information)
+                    .exceptionally(error -> {
+                        warning("Failed to load server information: " + error.getMessage());
+                        return null;
+                    });
+            getSDK().getListing()
+                    .thenAccept(listing -> storeCategories = listing)
+                    .exceptionally(error -> {
+                        warning("Failed to load store categories: " + error.getMessage());
+                        return null;
+                    });
         });
 
         Multithreading.executeAsync(() -> {
@@ -203,7 +200,11 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
 
     @Override
     public void dispatchCommand(String command) {
-        server.getCommandManager().execute(server.getCommandSource(), command);
+        try {
+            server.getCommandManager().getDispatcher().execute(command, server.getCommandSource());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -254,7 +255,7 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
         ServerPlayerEntity player = getPlayer(playerId).orElse(null);
         if (player == null) return -1;
 
-        DefaultedList<ItemStack> inv = player.inventory.main;
+        DefaultedList<ItemStack> inv = player.getInventory().main;
         return (int) inv.stream()
                 .filter(obj -> obj == null || obj.isEmpty())
                 .count();

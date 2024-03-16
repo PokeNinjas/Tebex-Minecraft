@@ -9,7 +9,7 @@ import io.tebex.plugin.command.BuyCommand;
 import io.tebex.plugin.command.SubCommand;
 import io.tebex.plugin.command.sub.*;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
@@ -41,8 +41,8 @@ public class CommandManager {
     public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralArgumentBuilder<ServerCommandSource> baseCommand = literal("tebex").executes(context -> {
             final ServerCommandSource source = context.getSource();
-            source.sendFeedback(new LiteralText("§8[Tebex] §7Welcome to Tebex!"), false);
-            source.sendFeedback(new LiteralText("§8[Tebex] §7This server is running version §fv" + platform.getVersion() + "§7."), false);
+            source.sendFeedback(() -> Text.of("§8[Tebex] §7Welcome to Tebex!"), false);
+            source.sendFeedback(() -> Text.of("§8[Tebex] §7This server is running version §fv" + platform.getVersion() + "§7."), false);
 
             return 1;
         });

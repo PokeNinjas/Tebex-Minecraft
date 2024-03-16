@@ -5,7 +5,7 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import io.tebex.plugin.TebexPlugin;
 import io.tebex.plugin.command.SubCommand;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 
@@ -25,9 +25,9 @@ public class ReloadCommand extends SubCommand {
             platform.refreshListings();
 //            platform.setBuyGUI(new BuyGUI(platform));
 
-            source.sendFeedback(new LiteralText("§8[Tebex] §7Successfully reloaded."), false);
+            source.sendFeedback(() -> Text.of("§8[Tebex] §7Successfully reloaded."), false);
         } catch (IOException e) {
-            source.sendFeedback(new LiteralText("§8[Tebex] §cFailed to reload the plugin: Check Console."), false);
+            source.sendFeedback(() -> Text.of("§8[Tebex] §cFailed to reload the plugin: Check Console."), false);
             throw new RuntimeException(e);
         }
     }

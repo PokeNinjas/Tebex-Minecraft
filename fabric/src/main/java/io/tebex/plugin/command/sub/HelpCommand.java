@@ -5,7 +5,6 @@ import io.tebex.plugin.TebexPlugin;
 import io.tebex.plugin.command.SubCommand;
 import io.tebex.plugin.manager.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.Comparator;
@@ -21,13 +20,13 @@ public class HelpCommand extends SubCommand {
     public void execute(CommandContext<ServerCommandSource> context) {
         final ServerCommandSource source = context.getSource();
 
-        source.sendFeedback(new LiteralText("§b[Tebex] §7Plugin Commands:"), false);
+        source.sendFeedback(() -> Text.of("§b[Tebex] §7Plugin Commands:"), false);
 
          commandManager
                  .getCommands()
                  .stream()
                  .sorted(Comparator.comparing(SubCommand::getName))
-                 .forEach(subCommand -> source.sendFeedback(new LiteralText(" §8- §f/tebex " + subCommand.getName() + "§f" + (!subCommand.getUsage().isBlank() ? " §3" + subCommand.getUsage() + " " : " ") + "§7§o(" + subCommand.getDescription() + ")"), false));
+                 .forEach(subCommand -> source.sendFeedback(() -> Text.of(" §8- §f/tebex " + subCommand.getName() + "§f" + (!subCommand.getUsage().isBlank() ? " §3" + subCommand.getUsage() + " " : " ") + "§7§o(" + subCommand.getDescription() + ")"), false));
     }
 
     @Override

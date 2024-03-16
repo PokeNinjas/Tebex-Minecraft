@@ -8,7 +8,7 @@ import io.tebex.sdk.SDK;
 import io.tebex.sdk.exception.ServerNotFoundException;
 import io.tebex.sdk.platform.config.ServerPlatformConfig;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ public class SecretCommand extends SubCommand {
         TebexPlugin platform = getPlatform();
 
         if(platform.isSetup()) {
-            source.sendFeedback(new LiteralText("§b[Tebex] §7Already connected to a store."), false);
+            source.sendFeedback(() -> Text.of("§b[Tebex] §7Already connected to a store."), false);
             return;
         }
 
@@ -42,19 +42,19 @@ public class SecretCommand extends SubCommand {
             try {
                 configFile.save();
             } catch (IOException e) {
-                source.sendFeedback(new LiteralText("§b[Tebex] §7Failed to save config: " + e.getMessage()), false);
+                source.sendFeedback(() -> Text.of("§b[Tebex] §7Failed to save config: " + e.getMessage()), false);
             }
 
-            source.sendFeedback(new LiteralText("§b[Tebex] §7Connected to §b" + serverInformation.getServer().getName() + "§7."), false);
+            source.sendFeedback(() -> Text.of("§b[Tebex] §7Connected to §b" + serverInformation.getServer().getName() + "§7."), false);
             platform.configure();
         }).exceptionally(ex -> {
             Throwable cause = ex.getCause();
 
             if(cause instanceof ServerNotFoundException) {
-                source.sendFeedback(new LiteralText("§b[Tebex] §7Server not found. Please check your secret key."), false);
+                source.sendFeedback(() -> Text.of("§b[Tebex] §7Server not found. Please check your secret key."), false);
                 platform.halt();
             } else {
-                source.sendFeedback(new LiteralText("§b[Tebex] §cAn error occurred: " + cause.getMessage()), false);
+                source.sendFeedback(() -> Text.of("§b[Tebex] §cAn error occurred: " + cause.getMessage()), false);
                 cause.printStackTrace();
             }
 
