@@ -2,6 +2,7 @@ package io.tebex.plugin;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.logging.LogUtils;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import io.tebex.plugin.event.JoinListener;
 import io.tebex.plugin.manager.CommandManager;
@@ -203,7 +204,7 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
         try {
             server.getCommandManager().getDispatcher().execute(command, server.getCommandSource());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LogUtils.getLogger().error("Failed to dispatch command: " + command, e);
         }
     }
 
