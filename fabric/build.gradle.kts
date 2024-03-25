@@ -37,6 +37,9 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 
     compileOnly("dev.dejvokep:boosted-yaml:1.3.2")
+
+    modApi("com.mythicalnetwork:common-api:0.13.27")
+    modApi("com.mythicalnetwork:fabric-api:0.13.27")
 }
 
 

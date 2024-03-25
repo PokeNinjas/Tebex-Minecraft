@@ -33,8 +33,8 @@ subprojects {
         maven("https://repo.opencollab.dev/main/") {
             name = "opencollab-snapshot-repo"
         }
-        maven("https://nexus.velocitypowered.com/repository/maven-public/") {
-            name = "velocity-repo"
+        maven("https://repo.papermc.io/repository/maven-public/") {
+            name = "papermc-repo"
         }
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
             name = "extendedclip-repo"
@@ -45,6 +45,15 @@ subprojects {
         maven("https://maven.nucleoid.xyz/") {
             name = "nucleoid"
         }
+        maven("https://repository.mythicalnetwork.live/repository/maven-releases/") {
+            name = "Mythical-Repo"
+            credentials {
+                username = getMythicalCredentials().first
+                password = getMythicalCredentials().second
+            }
+        }
+        maven("https://repo.lightdream.dev/")
+        maven("https://maven.wispforest.io")
     }
 
     tasks.named("processResources", Copy::class.java) {
@@ -68,4 +77,10 @@ fabricProject.configure<JavaPluginExtension> {
             }
         }
     }
+}
+
+private fun getMythicalCredentials(): Pair<String?, String?> {
+    val username = (project.findProperty("mythical.auth.username") ?: project.findProperty("mythicalUsername") ?: System.getenv("MYTHICAL_USERNAME") ?: "") as String?
+    val password = (project.findProperty("mythical.auth.password") ?: project.findProperty("mythicalPassword") ?: System.getenv("MYTHICAL_PASSWORD") ?: "") as String?
+    return Pair(username, password)
 }
