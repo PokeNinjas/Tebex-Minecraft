@@ -20,6 +20,7 @@ import io.tebex.sdk.request.response.ServerInformation;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -55,6 +56,8 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
     private List<Category> storeCategories;
     private List<ServerEvent> serverEvents;
 
+    private List<String> commandsToExecute;
+
     /**
      * Starts the Fabric platform.
      */
@@ -69,6 +72,8 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
             return;
         }
 
+        commandsToExecute = new ArrayList<>();
+
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             this.server = server;
             onEnable();
@@ -78,6 +83,13 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> new CommandManager(TebexPlugin.this).register(dispatcher));
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> Multithreading.shutdown());
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (String command : new ArrayList<>(commandsToExecute)) {
+                dispatchCommandNonThreaded(command);
+                commandsToExecute.remove(command);
+            }
+        });
     }
 
     private void onEnable() {
@@ -201,6 +213,10 @@ public class TebexPlugin implements Platform, DedicatedServerModInitializer {
 
     @Override
     public void dispatchCommand(String command) {
+        commandsToExecute.add(command);
+    }
+
+    public void dispatchCommandNonThreaded(String command) {
         try {
             server.getCommandManager().getDispatcher().execute(command, server.getCommandSource());
         } catch (Exception e) {
